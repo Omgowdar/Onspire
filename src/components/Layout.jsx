@@ -12,8 +12,11 @@ import {
   Bell
 } from "lucide-react";
 import { getWeeklyInsights } from "../services/api";
+import { useAuth } from "../auth/AuthContext";
+import Logo from "./Logo";
 
 export default function Layout({ children, onTriggerSOS }) {
+  const { user } = useAuth();
   const location = useLocation();
   const [fatigueAlert, setFatigueAlert] = useState(false);
   const [nudgeMessage, setNudgeMessage] = useState("");
@@ -40,12 +43,10 @@ export default function Layout({ children, onTriggerSOS }) {
       <div className="w-full max-w-md min-h-screen flex flex-col bg-brand-dark shadow-2xl border-x border-brand-border/40 relative">
         
         {/* Top Header */}
-        <header className="sticky top-0 z-30 flex items-center justify-between px-4 py-3 bg-brand-dark/95 backdrop-blur-md border-b border-brand-border">
+        <header className="sticky top-0 z-30 flex items-center justify-between px-4 py-3 bg-brand-dark border-b border-brand-border">
           <Link to="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-tr from-brand-purple to-brand-lightpurple flex items-center justify-center text-white font-bold shadow-md shadow-brand-purple/20">
-              GS
-            </div>
-            <span className="font-extrabold text-lg tracking-tight bg-gradient-to-r from-white via-gray-200 to-brand-lightpurple bg-clip-text text-transparent">
+            <Logo size={32} />
+            <span className="font-extrabold text-lg tracking-tight text-white">
               GigShield
             </span>
           </Link>
@@ -54,16 +55,16 @@ export default function Layout({ children, onTriggerSOS }) {
             {/* Quick SOS Trigger */}
             <button 
               onClick={onTriggerSOS}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-brand-red/10 border border-brand-red/30 text-brand-red text-xs font-bold uppercase tracking-wider animate-panic"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-brand-red/10 border border-brand-red/30 text-brand-red text-xs font-bold uppercase tracking-wider"
             >
-              <ShieldAlert size={14} className="animate-pulse" />
+              <ShieldAlert className="shrink-0" />
               <span>SOS</span>
             </button>
             
             {/* Profile Avatar Quick Link */}
-            <Link to="/profile" className="w-8 h-8 rounded-full border border-brand-border bg-brand-card flex items-center justify-center overflow-hidden hover:border-brand-purple">
+            <Link to="/profile" className="w-8 h-8 rounded border border-brand-border bg-brand-card flex items-center justify-center overflow-hidden hover:border-brand-purple">
               <img 
-                src="https://api.dicebear.com/7.x/bottts/svg?seed=Ramesh" 
+                src={user?.avatar || "https://api.dicebear.com/7.x/bottts/svg?seed=Ramesh"} 
                 alt="Profile" 
                 className="w-full h-full object-cover" 
               />
@@ -93,14 +94,14 @@ export default function Layout({ children, onTriggerSOS }) {
         </main>
 
         {/* Floating Bottom Navigation Bar */}
-        <nav className="fixed bottom-4 left-1/2 -translate-x-1/2 w-[90%] max-w-[360px] h-16 bg-brand-card/90 backdrop-blur-lg border border-brand-border/60 rounded-2xl shadow-xl z-30 flex items-center justify-around px-2">
+        <nav className="fixed bottom-4 left-1/2 -translate-x-1/2 w-[90%] max-w-[360px] h-16 bg-brand-card border border-brand-border rounded-lg z-30 flex items-center justify-around px-2">
           
           <NavLink 
             to="/" 
             className={({ isActive }) => 
-              `flex flex-col items-center justify-center w-12 h-12 rounded-xl transition-all ${
+              `flex flex-col items-center justify-center w-12 h-12 rounded transition-all ${
                 isActive 
-                  ? "text-brand-purple bg-brand-purple/10 scale-105" 
+                  ? "text-brand-purple bg-brand-purple/10" 
                   : "text-gray-400 hover:text-gray-200"
               }`
             }
@@ -112,9 +113,9 @@ export default function Layout({ children, onTriggerSOS }) {
           <NavLink 
             to="/log" 
             className={({ isActive }) => 
-              `flex flex-col items-center justify-center w-12 h-12 rounded-xl transition-all ${
+              `flex flex-col items-center justify-center w-12 h-12 rounded transition-all ${
                 isActive 
-                  ? "text-brand-purple bg-brand-purple/10 scale-105" 
+                  ? "text-brand-purple bg-brand-purple/10" 
                   : "text-gray-400 hover:text-gray-200"
               }`
             }
@@ -126,9 +127,9 @@ export default function Layout({ children, onTriggerSOS }) {
           <NavLink 
             to="/chat" 
             className={({ isActive }) => 
-              `flex flex-col items-center justify-center w-12 h-12 rounded-xl transition-all ${
+              `flex flex-col items-center justify-center w-12 h-12 rounded transition-all ${
                 isActive 
-                  ? "text-brand-purple bg-brand-purple/10 scale-105" 
+                  ? "text-brand-purple bg-brand-purple/10" 
                   : "text-gray-400 hover:text-gray-200"
               }`
             }
@@ -140,9 +141,9 @@ export default function Layout({ children, onTriggerSOS }) {
           <NavLink 
             to="/insights" 
             className={({ isActive }) => 
-              `flex flex-col items-center justify-center w-12 h-12 rounded-xl transition-all ${
+              `flex flex-col items-center justify-center w-12 h-12 rounded transition-all ${
                 isActive 
-                  ? "text-brand-purple bg-brand-purple/10 scale-105" 
+                  ? "text-brand-purple bg-brand-purple/10" 
                   : "text-gray-400 hover:text-gray-200"
               }`
             }
@@ -154,9 +155,9 @@ export default function Layout({ children, onTriggerSOS }) {
           <NavLink 
             to="/safety" 
             className={({ isActive }) => 
-              `flex flex-col items-center justify-center w-12 h-12 rounded-xl transition-all ${
+              `flex flex-col items-center justify-center w-12 h-12 rounded transition-all ${
                 isActive 
-                  ? "text-brand-purple bg-brand-purple/10 scale-105" 
+                  ? "text-brand-purple bg-brand-purple/10" 
                   : "text-gray-400 hover:text-gray-200"
               }`
             }

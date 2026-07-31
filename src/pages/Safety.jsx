@@ -69,7 +69,7 @@ export default function Safety() {
         <div className="flex justify-center py-4">
           <button
             onClick={() => setIsSOSOpen(true)}
-            className="w-36 h-36 rounded-full bg-gradient-to-tr from-brand-red to-red-500 text-white flex flex-col items-center justify-center border-4 border-brand-dark shadow-xl hover:scale-105 active:scale-95 animate-panic cursor-pointer"
+            className="safety-panic-btn w-36 h-36 rounded-full bg-gradient-to-tr from-brand-red to-red-500 text-white flex flex-col items-center justify-center border-4 border-brand-dark shadow-xl hover:scale-105 active:scale-95 animate-panic cursor-pointer"
           >
             <ShieldAlert size={44} className="animate-pulse" />
             <span className="font-black text-xs uppercase tracking-widest mt-2">I Feel Unsafe</span>

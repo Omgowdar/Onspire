@@ -1,25 +1,42 @@
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --font-sans: 'Outfit', system-ui, -apple-system, sans-serif;
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
   
-  --color-brand-purple: #a855f7;
-  --color-brand-lightpurple: #c084fc;
-  --color-brand-darkpurple: #7e22ce;
-  --color-brand-dark: #0b0914;
-  --color-brand-card: #151226;
-  --color-brand-card-hover: #1e1a36;
-  --color-brand-border: #24203e;
-  --color-brand-green: #10b981;
-  --color-brand-red: #ef4444;
-  --color-brand-amber: #f59e0b;
+  --color-brand-purple: #3B6FE0;
+  --color-brand-lightpurple: #3B6FE0;
+  --color-brand-darkpurple: #1A2230;
+  --color-brand-dark: #0B0F14;
+  --color-brand-card: #131922;
+  --color-brand-card-hover: #1A2230;
+  --color-brand-border: #242D3D;
+  --color-brand-green: #4B9C6D;
+  --color-brand-red: #C2554F;
+  --color-brand-amber: #C99A45;
+
+  /* Enforce border radius max 8px */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 8px;
+  --radius-2xl: 8px;
+  --radius-3xl: 8px;
+  --radius-full: 9999px;
+
+  /* Remove all shadows */
+  --shadow-sm: none;
+  --shadow-md: none;
+  --shadow-lg: none;
+  --shadow-xl: none;
+  --shadow-2xl: none;
+  --shadow-inner: none;
 }
 
 /* Custom global styles */
 body {
-  background-color: #0b0914; /* brand-dark */
-  color: #f3f4f6;
+  background-color: #0B0F14;
+  color: #E8EBF0;
   font-family: var(--font-sans);
   overflow-x: hidden;
   margin: 0;
@@ -27,46 +44,81 @@ body {
   -webkit-tap-highlight-color: transparent;
 }
 
+/* Enforce max 2 font weights (600 headers, 400 body) */
+h1, h2, h3, h4, h5, h6, 
+.font-bold, .font-semibold, .font-extrabold, .font-black {
+  font-weight: 600 !important;
+}
+
+body, p, span, input, select, textarea, button, a, div, li, td, th {
+  font-weight: 400;
+}
+
+/* Re-enable 600 for components that explicitly inherit font-bold */
+h1 *, h2 *, h3 *, h4 *, h5 *, h6 *, 
+.font-bold *, .font-semibold *, .font-extrabold *, .font-black * {
+  font-weight: inherit;
+}
+
+/* Enforce monochrome line icons only, consistent 18px size. Exclude custom/chart SVGs. */
+svg.lucide {
+  width: 18px !important;
+  height: 18px !important;
+  stroke-width: 2px !important;
+  fill: none !important;
+}
+
+/* Enforce flat 1px borders instead of shadows (can be overridden by specific items) */
+*:not(.safety-panic-btn) {
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+
+/* Localized custom SVG size and style overrides */
+.safety-panic-btn {
+  border-radius: 9999px !important;
+  box-shadow: 0 0 25px rgba(194, 85, 79, 0.6) !important;
+}
+.safety-panic-btn svg {
+  width: 44px !important;
+  height: 44px !important;
+}
+.safety-modal-icon {
+  border-radius: 9999px !important;
+}
+.safety-modal-icon svg {
+  width: 32px !important;
+  height: 32px !important;
+}
+.safety-modal-sending svg {
+  width: 20px !important;
+  height: 20px !important;
+}
+
+
 /* Scrollbar customizations */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #0b0914;
+  background: #0B0F14;
 }
 ::-webkit-scrollbar-thumb {
-  background: #24203e;
-  border-radius: 9999px;
+  background: #242D3D;
+  border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #a855f7;
+  background: #3B6FE0;
 }
 
-/* Hide default input outline on mobile focus */
+/* Hide default input outline on focus */
 input:focus, select:focus, textarea:focus {
   outline: none;
-  border-color: #a855f7;
-  box-shadow: 0 0 0 2px rgba(168, 85, 247, 0.2);
+  border-color: #3B6FE0 !important;
 }
 
 /* Smooth transitions for interactive elements */
 a, button, input, select, textarea {
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* Pulsing micro-animation for unsafe panic alert */
-@keyframes panic-pulse {
-  0%, 100% {
-    transform: scale(1);
-    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
-  }
-  50% {
-    transform: scale(1.03);
-    box-shadow: 0 0 0 15px rgba(239, 68, 68, 0);
-  }
-}
-
-.animate-panic {
-  animation: panic-pulse 2s infinite;
 }
