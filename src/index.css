@@ -1,0 +1,72 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: 'Outfit', system-ui, -apple-system, sans-serif;
+  
+  --color-brand-purple: #a855f7;
+  --color-brand-lightpurple: #c084fc;
+  --color-brand-darkpurple: #7e22ce;
+  --color-brand-dark: #0b0914;
+  --color-brand-card: #151226;
+  --color-brand-card-hover: #1e1a36;
+  --color-brand-border: #24203e;
+  --color-brand-green: #10b981;
+  --color-brand-red: #ef4444;
+  --color-brand-amber: #f59e0b;
+}
+
+/* Custom global styles */
+body {
+  background-color: #0b0914; /* brand-dark */
+  color: #f3f4f6;
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Scrollbar customizations */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #0b0914;
+}
+::-webkit-scrollbar-thumb {
+  background: #24203e;
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #a855f7;
+}
+
+/* Hide default input outline on mobile focus */
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: #a855f7;
+  box-shadow: 0 0 0 2px rgba(168, 85, 247, 0.2);
+}
+
+/* Smooth transitions for interactive elements */
+a, button, input, select, textarea {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Pulsing micro-animation for unsafe panic alert */
+@keyframes panic-pulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+  }
+  50% {
+    transform: scale(1.03);
+    box-shadow: 0 0 0 15px rgba(239, 68, 68, 0);
+  }
+}
+
+.animate-panic {
+  animation: panic-pulse 2s infinite;
+}
