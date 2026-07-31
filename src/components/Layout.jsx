@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { getWeeklyInsights } from "../services/api";
 import { useAuth } from "../auth/AuthContext";
+import Logo from "./Logo";
 
 export default function Layout({ children, onTriggerSOS }) {
   const { user } = useAuth();
@@ -44,9 +45,7 @@ export default function Layout({ children, onTriggerSOS }) {
         {/* Top Header */}
         <header className="sticky top-0 z-30 flex items-center justify-between px-4 py-3 bg-brand-dark border-b border-brand-border">
           <Link to="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-brand-purple flex items-center justify-center text-white font-bold">
-              GS
-            </div>
+            <Logo size={32} />
             <span className="font-extrabold text-lg tracking-tight text-white">
               GigShield
             </span>

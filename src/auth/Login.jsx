@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Lock, Smartphone, Mail, AlertCircle, KeyRound, Sparkles } from "lucide-react";
 import { useAuth } from "./AuthContext";
+import Logo from "../components/Logo";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -116,8 +117,8 @@ export default function Login() {
       
       {/* Branding Header */}
       <div className="text-center mb-6">
-        <div className="inline-flex w-14 h-14 rounded-2xl bg-gradient-to-tr from-brand-purple to-brand-lightpurple items-center justify-center text-white font-black text-2xl shadow-xl shadow-brand-purple/20 mb-3 animate-pulse">
-          GS
+        <div className="inline-flex items-center justify-center mb-3">
+          <Logo size={64} className="animate-pulse" />
         </div>
         <h2 className="text-2xl font-black tracking-tight text-white">Welcome to GigShield</h2>
         <p className="text-xs text-gray-400 font-semibold mt-1">Audit your fares, protect your road safety</p>
