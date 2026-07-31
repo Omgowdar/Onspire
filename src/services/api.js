@@ -270,8 +270,7 @@ export const logJob = async (jobData) => {
 // Send Chat Message to AI Rights Advisor
 export const sendChatMessage = async (userMessage) => {
   try {
-<<<<<<< HEAD
-    const response = await fetch("http://127.0.0.1:8000/ai/chat", {
+    const response = await fetch(`${BASE_URL}/ai/chat`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -302,29 +301,6 @@ export const sendChatMessage = async (userMessage) => {
     const cleanMsg = userMessage.toLowerCase().trim();
     let answer = mockChatAnswers["default"];
 
-    // Search if message matches any keys in mock answers
-=======
-    const response = await fetch(`${BASE_URL}/ai/chat`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message: userMessage })
-    });
-    if (!response.ok) throw new Error("Failed to chat");
-    const data = await response.json();
-    if (data.status === "error") {
-      throw new Error(data.message || "AI returned an error");
-    }
-    return {
-      sender: "bot",
-      text: data.response,
-      timestamp: new Date().toISOString()
-    };
-  } catch (error) {
-    console.error("API error chatting, falling back to mock:", error);
-    const cleanMsg = userMessage.toLowerCase().trim();
-    let answer = mockChatAnswers["default"];
-
->>>>>>> b406a849223ecf259313abd36b108ecf49712369
     for (const key of Object.keys(mockChatAnswers)) {
       if (cleanMsg.includes(key)) {
         answer = mockChatAnswers[key];
