@@ -1,5 +1,5 @@
 // src/auth/Signup.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { 
   User, 
@@ -18,9 +18,15 @@ import { useAuth } from "./AuthContext";
 
 export default function Signup() {
   const navigate = useNavigate();
-  const { signup } = useAuth();
+  const { signup, isAuthenticated } = useAuth();
   
   const [step, setStep] = useState(1); // 1 | 2
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/", { replace: true });
+    }
+  }, [isAuthenticated, navigate]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -270,7 +276,7 @@ export default function Signup() {
                     maxLength={10}
                     placeholder="10-digit mobile number"
                     value={trustedPhone}
-                    onChange={(e) => setTrustedPhone(e.target.value)}
+                    onChange={(e) => setTrustedPhone(e.target.value.replace(/\D/g, ''))}
                     className="w-full bg-brand-dark border border-brand-border rounded-xl pl-12 pr-3.5 py-2.5 text-xs text-white font-mono font-bold"
                     required
                   />

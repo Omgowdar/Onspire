@@ -1,5 +1,5 @@
 // src/auth/Login.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Lock, Smartphone, Mail, AlertCircle, KeyRound, Sparkles } from "lucide-react";
 import { useAuth } from "./AuthContext";
@@ -7,9 +7,15 @@ import { useAuth } from "./AuthContext";
 export default function Login() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { login, sendOTP, verifyOTP } = useAuth();
+  const { login, sendOTP, verifyOTP, isAuthenticated } = useAuth();
   
   const [activeTab, setActiveTab] = useState("password"); // password | otp
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/", { replace: true });
+    }
+  }, [isAuthenticated, navigate]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -123,6 +129,7 @@ export default function Login() {
         {/* Toggle tabs */}
         <div className="flex bg-brand-dark p-1 rounded-2xl border border-brand-border/80">
           <button
+            type="button"
             onClick={() => {
               setActiveTab("password");
               setError("");
@@ -136,6 +143,7 @@ export default function Login() {
             Password
           </button>
           <button
+            type="button"
             onClick={() => {
               setActiveTab("otp");
               setError("");
@@ -239,7 +247,7 @@ export default function Login() {
                       maxLength={10}
                       placeholder="98765 43210"
                       value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
+                      onChange={(e) => setPhone(e.target.value.replace(/\D/g, ''))}
                       className="w-full bg-brand-dark border border-brand-border rounded-xl pl-12 pr-3.5 py-3 text-xs text-white font-mono font-bold"
                       required
                     />

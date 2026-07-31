@@ -27,20 +27,28 @@ export const AuthProvider = ({ children }) => {
       throw new Error("Please enter both credentials.");
     }
 
+    // Sync to local profile data if already present
+    const profile = localStorage.getItem("gigshield_profile");
+    let name = "Ramesh Kumar";
+    let avatar = "https://api.dicebear.com/7.x/bottts/svg?seed=Ramesh";
+    if (profile) {
+      const pData = JSON.parse(profile);
+      if (pData.name) name = pData.name;
+      if (pData.avatar) avatar = pData.avatar;
+    }
+
     // Accept mock login
     const mockUser = {
       id: "driver_99",
-      name: "Ramesh Kumar",
+      name: name,
       phone: identifier.includes("@") ? "+91 98765 43210" : identifier,
       email: identifier.includes("@") ? identifier : "ramesh@gigshield.app",
-      avatar: "https://api.dicebear.com/7.x/bottts/svg?seed=Ramesh"
+      avatar: avatar
     };
 
     localStorage.setItem("gigshield_user", JSON.stringify(mockUser));
     setUser(mockUser);
     
-    // Sync to local profile data if already present
-    const profile = localStorage.getItem("gigshield_profile");
     if (profile) {
       const pData = JSON.parse(profile);
       pData.name = mockUser.name;
@@ -67,16 +75,32 @@ export const AuthProvider = ({ children }) => {
       throw new Error("Invalid verification code. Enter '123456' to pass.");
     }
 
+    const profile = localStorage.getItem("gigshield_profile");
+    let name = "Ramesh Kumar";
+    let avatar = "https://api.dicebear.com/7.x/bottts/svg?seed=Ramesh";
+    if (profile) {
+      const pData = JSON.parse(profile);
+      if (pData.name) name = pData.name;
+      if (pData.avatar) avatar = pData.avatar;
+    }
+
     const mockUser = {
       id: "driver_99",
-      name: "Ramesh Kumar",
+      name: name,
       phone: phone,
       email: "ramesh@gigshield.app",
-      avatar: "https://api.dicebear.com/7.x/bottts/svg?seed=Ramesh"
+      avatar: avatar
     };
 
     localStorage.setItem("gigshield_user", JSON.stringify(mockUser));
     setUser(mockUser);
+
+    if (profile) {
+      const pData = JSON.parse(profile);
+      pData.name = mockUser.name;
+      pData.phone = mockUser.phone;
+      localStorage.setItem("gigshield_profile", JSON.stringify(pData));
+    }
     return mockUser;
   };
 

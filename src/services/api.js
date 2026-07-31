@@ -74,12 +74,7 @@ export const getWeeklyInsights = async () => {
     const underpaid = platformJobs.reduce((sum, j) => sum + (j.status === 'underpaid' ? j.difference : 0), 0);
     
     // Choose color
-    let color = "#a855f7"; // default
-    if (platform === "Uber") color = "#a855f7";
-    else if (platform === "Ola") color = "#c084fc";
-    else if (platform === "Zomato") color = "#10b981";
-    else if (platform === "Swiggy") color = "#f97316";
-    else if (platform === "Rapido") color = "#eab308";
+    let color = "#3B6FE0";
 
     return { name: platform, earned, underpaid, color };
   });
