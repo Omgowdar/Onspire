@@ -111,7 +111,7 @@ export default function Dashboard() {
           <Sparkles size={16} />
         </div>
         <div>
-          <h4 className="text-xs font-extrabold text-white uppercase tracking-wider">AI Copilot Analysis</h4>
+          <h4 className="text-xs font-extrabold text-white uppercase tracking-wider">Gemini Analysis</h4>
           <p className="text-xs text-gray-300 mt-1 leading-relaxed">{aiWeeklyInsight}</p>
         </div>
       </div>
