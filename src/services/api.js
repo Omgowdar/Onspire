@@ -270,6 +270,40 @@ export const logJob = async (jobData) => {
 // Send Chat Message to AI Rights Advisor
 export const sendChatMessage = async (userMessage) => {
   try {
+<<<<<<< HEAD
+    const response = await fetch("http://127.0.0.1:8000/ai/chat", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ message: userMessage }),
+    });
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    if (data.status === "success") {
+      return {
+        sender: "bot",
+        text: data.response,
+        timestamp: new Date().toISOString()
+      };
+    } else {
+      throw new Error(data.message || "Failed to get AI response");
+    }
+  } catch (error) {
+    console.warn("FastAPI backend connection failed, falling back to mock chatbot responses. Error:", error);
+    
+    // Simulate bot typing delay for fallback mock
+    await delay(800);
+    
+    const cleanMsg = userMessage.toLowerCase().trim();
+    let answer = mockChatAnswers["default"];
+
+    // Search if message matches any keys in mock answers
+=======
     const response = await fetch(`${BASE_URL}/ai/chat`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -290,6 +324,7 @@ export const sendChatMessage = async (userMessage) => {
     const cleanMsg = userMessage.toLowerCase().trim();
     let answer = mockChatAnswers["default"];
 
+>>>>>>> b406a849223ecf259313abd36b108ecf49712369
     for (const key of Object.keys(mockChatAnswers)) {
       if (cleanMsg.includes(key)) {
         answer = mockChatAnswers[key];
