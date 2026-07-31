@@ -357,3 +357,26 @@ def ai_financial_advice(payload: AIFinancialAdviceRequest):
     )
     return json.loads(result_str)
 
+
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
+
+# Serve SPA Frontend if compiled dist exists
+dist_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "../dist"))
+if os.path.exists(dist_dir):
+    assets_dir = os.path.join(dist_dir, "assets")
+    if os.path.exists(assets_dir):
+        app.mount("/assets", StaticFiles(directory=assets_dir), name="assets")
+
+    @app.get("/{catchall:path}")
+    def serve_frontend(catchall: str):
+        path_segments = catchall.split("/")
+        if path_segments and path_segments[0] in ["health", "jobs", "dashboard", "auth", "ai", "docs", "openapi.json"]:
+            raise HTTPException(status_code=404, detail="API route not found")
+        
+        index_file = os.path.join(dist_dir, "index.html")
+        if os.path.exists(index_file):
+            return FileResponse(index_file)
+        raise HTTPException(status_code=404, detail="Frontend build missing. Run 'npm run build' first.")
+
+
