@@ -1,3 +1,5 @@
+import json
+
 from contextlib import asynccontextmanager
 from datetime import datetime, timedelta, timezone
 from typing import List, Optional
@@ -14,8 +16,25 @@ from schemas import (
     JobResponse,
     WeeklyInsightResponse,
     UnderpaymentTimeBreakdown,
+    AIChatRequest,
+    AIContractExplainRequest,
+    AIComplaintGenerateRequest,
+    AIWeeklySummaryRequest,
+    AIScamDetectRequest,
+    AIBurnoutAnalysisRequest,
+    AIFinancialAdviceRequest,
 )
 from fairness import check_fairness
+from ai import (
+    chat,
+    explain_contract,
+    generate_complaint,
+    generate_weekly_summary,
+    detect_scam,
+    burnout_analysis,
+    financial_advice,
+)
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -236,3 +255,48 @@ def get_weekly_insight_data(db: Session = Depends(get_db)) -> dict:
             "night_total_underpayment": round(night_total_underpayment, 2),
         }
     }
+
+# AI Module Endpoints
+@app.post("/ai/chat")
+def ai_chat(payload: AIChatRequest):
+    result_str = chat(payload.message)
+    return json.loads(result_str)
+
+@app.post("/ai/explain-contract")
+def ai_explain_contract(payload: AIContractExplainRequest):
+    result_str = explain_contract(payload.contract_text)
+    return json.loads(result_str)
+
+@app.post("/ai/generate-complaint")
+def ai_generate_complaint(payload: AIComplaintGenerateRequest):
+    result_str = generate_complaint(payload.issue_details)
+    return json.loads(result_str)
+
+@app.post("/ai/weekly-summary")
+def ai_weekly_summary(payload: AIWeeklySummaryRequest):
+    logs_list = [log.model_dump() for log in payload.worker_data]
+    result_str = generate_weekly_summary(logs_list)
+    return json.loads(result_str)
+
+@app.post("/ai/detect-scam")
+def ai_detect_scam(payload: AIScamDetectRequest):
+    result_str = detect_scam(payload.job_post)
+    return json.loads(result_str)
+
+@app.post("/ai/burnout-analysis")
+def ai_burnout_analysis(payload: AIBurnoutAnalysisRequest):
+    result_str = burnout_analysis(
+        hours_worked=payload.hours_worked,
+        sleep_hours=payload.sleep_hours,
+        stress_level=payload.stress_level
+    )
+    return json.loads(result_str)
+
+@app.post("/ai/financial-advice")
+def ai_financial_advice(payload: AIFinancialAdviceRequest):
+    result_str = financial_advice(
+        income=payload.income,
+        savings_goal=payload.savings_goal
+    )
+    return json.loads(result_str)
+
