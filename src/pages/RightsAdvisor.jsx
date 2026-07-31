@@ -16,14 +16,24 @@ export default function RightsAdvisor() {
   const location = useLocation();
   const chatBottomRef = useRef(null);
 
-  const [messages, setMessages] = useState([
-    {
-      id: "welcome",
-      sender: "bot",
-      text: "Hello! I am your GigShield Rights Advisor. I can help you analyze underpayments, understand your labor rights, and draft complaints for support. What can I do for you today?",
-      timestamp: new Date().toISOString()
+  const [messages, setMessages] = useState(() => {
+    const saved = localStorage.getItem("gigshield_chat_history");
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch (e) {
+        console.error("Error loading chat history:", e);
+      }
     }
-  ]);
+    return [
+      {
+        id: "welcome",
+        sender: "bot",
+        text: "Hello! I am your GigShield Rights Advisor. I can help you analyze underpayments, understand your labor rights, and draft complaints for support. What can I do for you today?",
+        timestamp: new Date().toISOString()
+      }
+    ];
+  });
   const [inputText, setInputText] = useState("");
   const [typing, setTyping] = useState(false);
 
@@ -35,6 +45,11 @@ export default function RightsAdvisor() {
   useEffect(() => {
     scrollToBottom();
   }, [messages, typing]);
+
+  // Persist chat history to localStorage
+  useEffect(() => {
+    localStorage.setItem("gigshield_chat_history", JSON.stringify(messages));
+  }, [messages]);
 
   // Handle incoming redirect queries (e.g. from LogJob underpayment result)
   useEffect(() => {

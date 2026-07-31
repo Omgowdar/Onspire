@@ -27,35 +27,23 @@ export const AuthProvider = ({ children }) => {
       throw new Error("Please enter both credentials.");
     }
 
-    // Sync to local profile data if already present
-    const profile = localStorage.getItem("gigshield_profile");
-    let name = "Ramesh Kumar";
-    let avatar = "https://api.dicebear.com/7.x/bottts/svg?seed=Ramesh";
-    if (profile) {
-      const pData = JSON.parse(profile);
-      if (pData.name) name = pData.name;
-      if (pData.avatar) avatar = pData.avatar;
+    const accounts = JSON.parse(localStorage.getItem("gigshield_accounts") || "[]");
+    const foundAccount = accounts.find(
+      a => a.emailOrPhone.toLowerCase().trim() === identifier.toLowerCase().trim()
+    );
+
+    if (!foundAccount) {
+      throw new Error("Account does not exist. Please sign up first.");
     }
 
-    // Accept mock login
-    const mockUser = {
-      id: "driver_99",
-      name: name,
-      phone: identifier.includes("@") ? "+91 98765 43210" : identifier,
-      email: identifier.includes("@") ? identifier : "ramesh@gigshield.app",
-      avatar: avatar
-    };
-
-    localStorage.setItem("gigshield_user", JSON.stringify(mockUser));
-    setUser(mockUser);
-    
-    if (profile) {
-      const pData = JSON.parse(profile);
-      pData.name = mockUser.name;
-      pData.phone = mockUser.phone;
-      localStorage.setItem("gigshield_profile", JSON.stringify(pData));
+    if (foundAccount.password !== password) {
+      throw new Error("Incorrect password. Please try again.");
     }
-    return mockUser;
+
+    localStorage.setItem("gigshield_user", JSON.stringify(foundAccount.user));
+    localStorage.setItem("gigshield_profile", JSON.stringify(foundAccount.profile));
+    setUser(foundAccount.user);
+    return foundAccount.user;
   };
 
   // Trigger mock OTP code
@@ -64,7 +52,6 @@ export const AuthProvider = ({ children }) => {
     if (!phone || phone.length < 10) {
       throw new Error("Please enter a valid 10-digit mobile number.");
     }
-    // Return true indicating SMS dispatch
     return true;
   };
 
@@ -75,38 +62,37 @@ export const AuthProvider = ({ children }) => {
       throw new Error("Invalid verification code. Enter '123456' to pass.");
     }
 
-    const profile = localStorage.getItem("gigshield_profile");
-    let name = "Ramesh Kumar";
-    let avatar = "https://api.dicebear.com/7.x/bottts/svg?seed=Ramesh";
-    if (profile) {
-      const pData = JSON.parse(profile);
-      if (pData.name) name = pData.name;
-      if (pData.avatar) avatar = pData.avatar;
+    const accounts = JSON.parse(localStorage.getItem("gigshield_accounts") || "[]");
+    const found = accounts.find(
+      a => a.emailOrPhone.toLowerCase().trim() === phone.toLowerCase().trim()
+    );
+
+    if (!found) {
+      throw new Error("Account does not exist. Please sign up first.");
     }
 
-    const mockUser = {
-      id: "driver_99",
-      name: name,
-      phone: phone,
-      email: "ramesh@gigshield.app",
-      avatar: avatar
-    };
-
-    localStorage.setItem("gigshield_user", JSON.stringify(mockUser));
-    setUser(mockUser);
-
-    if (profile) {
-      const pData = JSON.parse(profile);
-      pData.name = mockUser.name;
-      pData.phone = mockUser.phone;
-      localStorage.setItem("gigshield_profile", JSON.stringify(pData));
-    }
-    return mockUser;
+    localStorage.setItem("gigshield_user", JSON.stringify(found.user));
+    localStorage.setItem("gigshield_profile", JSON.stringify(found.profile));
+    setUser(found.user);
+    return found.user;
   };
 
   // Onboard new user
   const signup = async (userData) => {
     await new Promise(resolve => setTimeout(resolve, 1000));
+
+    if (!userData.phoneOrEmail || !userData.password || !userData.name) {
+      throw new Error("Please enter all required signup information.");
+    }
+
+    const accounts = JSON.parse(localStorage.getItem("gigshield_accounts") || "[]");
+    const exists = accounts.some(
+      a => a.emailOrPhone.toLowerCase().trim() === userData.phoneOrEmail.toLowerCase().trim()
+    );
+
+    if (exists) {
+      throw new Error("Account already exists with this phone number or email.");
+    }
 
     const newUser = {
       id: `driver_${Date.now()}`,
@@ -116,10 +102,6 @@ export const AuthProvider = ({ children }) => {
       avatar: `https://api.dicebear.com/7.x/bottts/svg?seed=${userData.name}`
     };
 
-    // Save active auth session
-    localStorage.setItem("gigshield_user", JSON.stringify(newUser));
-    
-    // Save onboarding settings directly to profile db
     const defaultProfile = {
       name: userData.name,
       phone: newUser.phone,
@@ -137,6 +119,17 @@ export const AuthProvider = ({ children }) => {
       ]
     };
 
+    const newAccount = {
+      emailOrPhone: userData.phoneOrEmail,
+      password: userData.password,
+      user: newUser,
+      profile: defaultProfile
+    };
+
+    accounts.push(newAccount);
+    localStorage.setItem("gigshield_accounts", JSON.stringify(accounts));
+
+    localStorage.setItem("gigshield_user", JSON.stringify(newUser));
     localStorage.setItem("gigshield_profile", JSON.stringify(defaultProfile));
     setUser(newUser);
     return newUser;
@@ -145,6 +138,8 @@ export const AuthProvider = ({ children }) => {
   // Sign out user
   const logout = () => {
     localStorage.removeItem("gigshield_user");
+    localStorage.removeItem("gigshield_profile");
+    localStorage.removeItem("gigshield_chat_history");
     setUser(null);
   };
 
