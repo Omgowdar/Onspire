@@ -54,6 +54,25 @@ def get_model_name() -> str:
     """
     return os.getenv("GEMINI_MODEL", "gemini-1.5-flash")
 
+def get_friendly_error_message(exception: Exception) -> str:
+    """
+    Translates technical exceptions into user-friendly error messages.
+    """
+    err_msg = str(exception)
+    err_lower = err_msg.lower()
+    
+    if "quota" in err_lower or "rate limit" in err_lower or "limit exceeded" in err_lower or "429" in err_lower:
+        return "Gemini API rate limit or quota exceeded. Please wait a short moment and try again."
+    elif "api key" in err_lower or "unauthorized" in err_lower or "403" in err_lower or "key not found" in err_lower:
+        return "API Key configuration error. Please verify that GEMINI_API_KEY is correctly set in your .env file."
+    elif "connection" in err_lower or "timeout" in err_lower or "host" in err_lower or "network" in err_lower or "dns" in err_lower:
+        return "A network error or timeout occurred while communicating with the AI service. Please check your connection and retry."
+    elif "empty response" in err_lower:
+        return "The AI service returned an empty response. Please refine your input and try again."
+    
+    return f"AI Service error: {err_msg}"
+
+
 def generate_text(prompt: str, system_instruction: str = None) -> str:
     """
     Generates plain text response using the Gemini API.
@@ -76,10 +95,8 @@ def generate_text(prompt: str, system_instruction: str = None) -> str:
         if not response.text:
             raise RuntimeError("Gemini API returned an empty response.")
         return response.text
-    except GoogleAPICallError as e:
-        raise RuntimeError(f"Gemini API Call failed: {e.message}") from e
     except Exception as e:
-        raise RuntimeError(f"An unexpected error occurred during Gemini API call: {str(e)}") from e
+        raise RuntimeError(get_friendly_error_message(e)) from e
 
 def repair_json(json_str: str) -> str:
     """
@@ -174,12 +191,8 @@ def generate_json(prompt: str, system_instruction: str = None) -> dict:
                 # Attempt to auto-repair using our robust repair_json function if it still fails
                 repaired = repair_json(cleaned)
                 return json.loads(repaired)
-    except GoogleAPICallError as e:
-        raise RuntimeError(f"Gemini API Call failed: {e.message}") from e
-    except json.JSONDecodeError as e:
-        raise RuntimeError(f"Failed to parse Gemini response as JSON. Content: {text_out}") from e
     except Exception as e:
-        raise RuntimeError(f"An unexpected error occurred during Gemini API call: {str(e)}") from e
+        raise RuntimeError(get_friendly_error_message(e)) from e
 
 if __name__ == "__main__":
     # Example usage for testing
