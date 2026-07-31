@@ -27,28 +27,39 @@ export default function LogJob() {
   // OCR Scan States
   const [scanning, setScanning] = useState(false);
   const [scannedData, setScannedData] = useState(null);
+  const [uploadedFile, setUploadedFile] = useState(null);
   
   // Audit Results States
   const [auditing, setAuditing] = useState(false);
   const [auditResult, setAuditResult] = useState(null);
 
-  // Trigger Mock OCR Scan
-  const handleMockOCRScan = () => {
+  // Handle real file upload
+  const handleFileUpload = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    setUploadedFile(file);
     setScanning(true);
     setScannedData(null);
-    
-    // Simulate OCR delay
+
+    // Detect platform from filename
+    const name = file.name.toLowerCase();
+    let detectedPlatform = "Uber";
+    if (name.includes("ola")) detectedPlatform = "Ola";
+    else if (name.includes("zomato")) detectedPlatform = "Zomato";
+    else if (name.includes("swiggy")) detectedPlatform = "Swiggy";
+    else if (name.includes("rapido")) detectedPlatform = "Rapido";
+
     setTimeout(() => {
       setScanning(false);
       setScannedData({
-        platform: "Uber",
-        fare: "185",
-        distance: "12.4",
-        duration: "45",
+        platform: detectedPlatform,
+        fare: "",
+        distance: "",
+        duration: "",
         date: new Date().toLocaleString(),
-        mockFileName: "uber_trip_invoice_103.png"
+        mockFileName: file.name
       });
-    }, 1500);
+    }, 1200);
   };
 
   // Submit Job Data for Auditing
@@ -230,18 +241,21 @@ export default function LogJob() {
             <div className="space-y-4">
               
               {!scanning && !scannedData && (
-                <div 
-                  onClick={handleMockOCRScan}
-                  className="border-2 border-dashed border-brand-border hover:border-brand-purple/40 bg-brand-dark/40 hover:bg-brand-dark/80 rounded-2xl p-8 flex flex-col items-center justify-center text-center cursor-pointer transition-all duration-300 group"
-                >
+                <label className="border-2 border-dashed border-brand-border hover:border-brand-purple/40 bg-brand-dark/40 hover:bg-brand-dark/80 rounded-2xl p-8 flex flex-col items-center justify-center text-center cursor-pointer transition-all duration-300 group">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handleFileUpload}
+                  />
                   <div className="w-12 h-12 rounded-full bg-brand-purple/10 text-brand-lightpurple flex items-center justify-center mb-3 group-hover:scale-105">
                     <Upload size={22} />
                   </div>
                   <span className="text-sm font-extrabold text-white">Upload Driver Receipt Screenshot</span>
                   <span className="text-[10px] text-gray-500 mt-1 max-w-xs leading-relaxed">
-                    Supports Uber, Ola, Swiggy, Zomato, Rapido. (Tap to simulate scanner)
+                    Supports Uber, Ola, Swiggy, Zomato, Rapido. Tap to browse your files.
                   </span>
-                </div>
+                </label>
               )}
 
               {/* OCR Scanning animation */}
@@ -253,15 +267,15 @@ export default function LogJob() {
                 </div>
               )}
 
-              {/* OCR Extracted Data Preview */}
+              {/* OCR Extracted Data — Editable Fields */}
               {scannedData && (
                 <div className="space-y-4 animate-fadeIn">
                   <div className="flex items-center justify-between px-1">
                     <span className="text-xs font-bold text-brand-green flex items-center gap-1">
-                      <CheckCircle size={12} /> OCR Success
+                      <CheckCircle size={12} /> File Uploaded
                     </span>
-                    <button 
-                      onClick={() => setScannedData(null)} 
+                    <button
+                      onClick={() => { setScannedData(null); setUploadedFile(null); }}
                       className="text-[10px] text-brand-red font-bold hover:underline"
                     >
                       Clear File
@@ -270,28 +284,59 @@ export default function LogJob() {
 
                   <div className="bg-brand-dark p-4 rounded-2xl border border-brand-border space-y-3">
                     <div className="flex items-center justify-between pb-2.5 border-b border-brand-border/60">
-                      <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wide">Screenshot</span>
-                      <span className="text-xs font-mono font-bold text-brand-lightpurple flex items-center gap-1">
+                      <span className="text-[11px] font-bold text-gray-400 uppercase tracking-wide">File</span>
+                      <span className="text-xs font-mono font-bold text-brand-lightpurple flex items-center gap-1 truncate max-w-[180px]">
                         <FileText size={12} /> {scannedData.mockFileName}
                       </span>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-3 text-sm">
+                    <div className="space-y-3">
                       <div>
-                        <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Platform</p>
-                        <p className="font-extrabold text-white mt-0.5">{scannedData.platform}</p>
+                        <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1">Platform</label>
+                        <select
+                          value={scannedData.platform}
+                          onChange={(e) => setScannedData(prev => ({ ...prev, platform: e.target.value }))}
+                          className="w-full bg-brand-card border border-brand-border rounded-xl px-3 py-2.5 text-xs text-white font-semibold cursor-pointer"
+                        >
+                          <option value="Uber">Uber</option>
+                          <option value="Ola">Ola</option>
+                          <option value="Zomato">Zomato</option>
+                          <option value="Swiggy">Swiggy</option>
+                          <option value="Rapido">Rapido</option>
+                        </select>
                       </div>
-                      <div>
-                        <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Fare Extracted</p>
-                        <p className="font-extrabold text-white mt-0.5">₹{scannedData.fare}</p>
-                      </div>
-                      <div>
-                        <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Distance</p>
-                        <p className="font-extrabold text-white mt-0.5">{scannedData.distance} km</p>
-                      </div>
-                      <div>
-                        <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Duration</p>
-                        <p className="font-extrabold text-white mt-0.5">{scannedData.duration} mins</p>
+                      <div className="grid grid-cols-3 gap-2">
+                        <div>
+                          <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1">Fare (₹)</label>
+                          <input
+                            type="number"
+                            placeholder="e.g. 185"
+                            value={scannedData.fare}
+                            onChange={(e) => setScannedData(prev => ({ ...prev, fare: e.target.value }))}
+                            className="w-full bg-brand-card border border-brand-border rounded-xl px-3 py-2.5 text-xs text-white font-bold placeholder:text-gray-600"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1">Dist (km)</label>
+                          <input
+                            type="number"
+                            step="0.1"
+                            placeholder="e.g. 12"
+                            value={scannedData.distance}
+                            onChange={(e) => setScannedData(prev => ({ ...prev, distance: e.target.value }))}
+                            className="w-full bg-brand-card border border-brand-border rounded-xl px-3 py-2.5 text-xs text-white font-bold placeholder:text-gray-600"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1">Mins</label>
+                          <input
+                            type="number"
+                            placeholder="e.g. 45"
+                            value={scannedData.duration}
+                            onChange={(e) => setScannedData(prev => ({ ...prev, duration: e.target.value }))}
+                            className="w-full bg-brand-card border border-brand-border rounded-xl px-3 py-2.5 text-xs text-white font-bold placeholder:text-gray-600"
+                          />
+                        </div>
                       </div>
                     </div>
                   </div>
