@@ -69,3 +69,12 @@ class AIFinancialAdviceRequest(BaseModel):
     income: float = Field(..., gt=0.0, description="Monthly income")
     savings_goal: float = Field(..., ge=0.0, description="Monthly savings goal")
 
+
+class SendOTPRequest(BaseModel):
+    phone: str = Field(..., min_length=10, description="10-digit mobile number")
+
+class VerifyOTPRequest(BaseModel):
+    phone: str = Field(..., min_length=10, description="10-digit mobile number")
+    otp: str = Field(..., min_length=6, max_length=6, description="6-digit verification code")
+
+

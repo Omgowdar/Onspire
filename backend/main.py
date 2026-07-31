@@ -1,5 +1,6 @@
 import json
-
+import random
+import os
 from contextlib import asynccontextmanager
 from datetime import datetime, timedelta, timezone
 from typing import List, Optional
@@ -23,6 +24,8 @@ from schemas import (
     AIScamDetectRequest,
     AIBurnoutAnalysisRequest,
     AIFinancialAdviceRequest,
+    SendOTPRequest,
+    VerifyOTPRequest,
 )
 from fairness import check_fairness
 from ai import (
@@ -255,6 +258,60 @@ def get_weekly_insight_data(db: Session = Depends(get_db)) -> dict:
             "night_total_underpayment": round(night_total_underpayment, 2),
         }
     }
+
+
+# In-memory OTP store (phone -> otp)
+otp_store = {}
+
+@app.post("/auth/send-otp", status_code=status.HTTP_200_OK)
+def send_otp(payload: SendOTPRequest) -> dict:
+    """Generate and send 6-digit OTP code to the requested phone number."""
+    otp = f"{random.randint(100000, 999999)}"
+    otp_store[payload.phone] = otp
+    
+    account_sid = os.getenv("TWILIO_ACCOUNT_SID")
+    auth_token = os.getenv("TWILIO_AUTH_TOKEN")
+    twilio_number = os.getenv("TWILIO_PHONE_NUMBER")
+    
+    twilio_configured = bool(account_sid and auth_token and twilio_number)
+    sent_real = False
+    
+    if twilio_configured:
+        try:
+            from twilio.rest import Client
+            client = Client(account_sid, auth_token)
+            client.messages.create(
+                body=f"GigShield: Your verification code is {otp}.",
+                from_=twilio_number,
+                to=payload.phone
+            )
+            sent_real = True
+        except Exception as e:
+            print(f"Twilio Send Exception: {str(e)}")
+            
+    if not sent_real:
+        print(f"\n📢 [MOCK SMS] Sent OTP {otp} to {payload.phone}\n")
+        
+    return {
+        "status": "success",
+        "message": "OTP sent successfully via Twilio" if sent_real else "OTP logged to server (mock fallback)",
+        "mock_otp": otp if not sent_real else None
+    }
+
+@app.post("/auth/verify-otp", status_code=status.HTTP_200_OK)
+def verify_otp(payload: VerifyOTPRequest) -> dict:
+    """Verify that the provided OTP matches the one sent to the phone number."""
+    stored_otp = otp_store.get(payload.phone)
+    if not stored_otp or stored_otp != payload.otp:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid verification code. Please request a new one."
+        )
+    return {
+        "status": "success",
+        "message": "OTP verified successfully"
+    }
+
 
 # AI Module Endpoints
 @app.post("/ai/chat")

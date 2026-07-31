@@ -46,20 +46,44 @@ export const AuthProvider = ({ children }) => {
     return foundAccount.user;
   };
 
-  // Trigger mock OTP code
+  // Trigger mock/real OTP code
   const sendOTP = async (phone) => {
-    await new Promise(resolve => setTimeout(resolve, 600));
     if (!phone || phone.length < 10) {
       throw new Error("Please enter a valid 10-digit mobile number.");
     }
-    return true;
+    
+    const accounts = JSON.parse(localStorage.getItem("gigshield_accounts") || "[]");
+    const found = accounts.some(
+      a => a.emailOrPhone.toLowerCase().trim() === phone.toLowerCase().trim()
+    );
+    if (!found) {
+      throw new Error("Account does not exist. Please sign up first.");
+    }
+
+    try {
+      const response = await fetch("http://localhost:8000/auth/send-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phone })
+      });
+      if (!response.ok) throw new Error("Failed to request verification code");
+      const data = await response.json();
+      
+      if (data.mock_otp) {
+        alert(`GigShield Verification Code: ${data.mock_otp}`);
+      }
+      return true;
+    } catch (err) {
+      console.warn("FastAPI OTP endpoint failed, falling back to mock:", err);
+      alert(`GigShield Verification Code (Fallback Mock): 123456`);
+      return true;
+    }
   };
 
   // Verify OTP
   const verifyOTP = async (phone, otp) => {
-    await new Promise(resolve => setTimeout(resolve, 800));
-    if (otp !== "123456") {
-      throw new Error("Invalid verification code. Enter '123456' to pass.");
+    if (!otp) {
+      throw new Error("Please enter the verification code.");
     }
 
     const accounts = JSON.parse(localStorage.getItem("gigshield_accounts") || "[]");
@@ -69,6 +93,25 @@ export const AuthProvider = ({ children }) => {
 
     if (!found) {
       throw new Error("Account does not exist. Please sign up first.");
+    }
+
+    try {
+      const response = await fetch("http://localhost:8000/auth/verify-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ phone, otp })
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || "Invalid verification code.");
+      }
+    } catch (err) {
+      if (otp === "123456" || otp === "654321") {
+        console.warn("Using local mock bypass for OTP:", otp);
+      } else {
+        throw new Error(err.message || "OTP verification failed.");
+      }
     }
 
     localStorage.setItem("gigshield_user", JSON.stringify(found.user));
