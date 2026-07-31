@@ -86,7 +86,7 @@ export default function Safety() {
             className="flex items-center gap-1.5 text-xs text-brand-lightpurple hover:text-white font-bold bg-brand-purple/15 border border-brand-purple/20 px-3.5 py-2 rounded-xl"
           >
             <PhoneCall size={12} />
-            <span>Call {profile?.trustedContactName ? 'Priya' : 'SOS'}</span>
+            <span>Call {profile?.trustedContactName || 'SOS'}</span>
           </a>
         </div>
       </div>
