@@ -22,7 +22,7 @@
   --radius-xl: 8px;
   --radius-2xl: 8px;
   --radius-3xl: 8px;
-  --radius-full: 8px;
+  --radius-full: 9999px;
 
   /* Remove all shadows */
   --shadow-sm: none;
@@ -60,31 +60,41 @@ h1 *, h2 *, h3 *, h4 *, h5 *, h6 *,
   font-weight: inherit;
 }
 
-/* Enforce monochrome line icons only, consistent 18px size */
-svg {
+/* Enforce monochrome line icons only, consistent 18px size. Exclude custom/chart SVGs. */
+svg.lucide {
   width: 18px !important;
   height: 18px !important;
   stroke-width: 2px !important;
   fill: none !important;
 }
 
-/* Enforce flat 1px borders instead of shadows */
-* {
+/* Enforce flat 1px borders instead of shadows (can be overridden by specific items) */
+*:not(.safety-panic-btn) {
   box-shadow: none !important;
   text-shadow: none !important;
 }
 
-/* Replace any gradient classes with flat backgrounds and remove blur filter */
-.bg-gradient-to-tr, .bg-gradient-to-r, .bg-gradient-to-br, .bg-gradient-to-t, .bg-gradient-to-b {
-  background-image: none !important;
+/* Localized custom SVG size and style overrides */
+.safety-panic-btn {
+  border-radius: 9999px !important;
+  box-shadow: 0 0 25px rgba(194, 85, 79, 0.6) !important;
 }
-.blur-sm, .blur-md, .blur-lg, .blur-xl, .blur-2xl, .blur-3xl {
-  filter: none !important;
-  display: none !important;
+.safety-panic-btn svg {
+  width: 44px !important;
+  height: 44px !important;
 }
-.backdrop-blur-sm, .backdrop-blur-md, .backdrop-blur-lg, .backdrop-blur-xl {
-  backdrop-filter: none !important;
+.safety-modal-icon {
+  border-radius: 9999px !important;
 }
+.safety-modal-icon svg {
+  width: 32px !important;
+  height: 32px !important;
+}
+.safety-modal-sending svg {
+  width: 20px !important;
+  height: 20px !important;
+}
+
 
 /* Scrollbar customizations */
 ::-webkit-scrollbar {

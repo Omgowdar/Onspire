@@ -52,7 +52,7 @@ export default function SafetyModal({ isOpen, onClose }) {
           
           {step === 'confirm' && (
             <>
-              <div className="w-16 h-16 rounded-full bg-brand-red/10 border-2 border-brand-red flex items-center justify-center text-brand-red mb-4 animate-bounce">
+              <div className="safety-modal-icon w-16 h-16 rounded-full bg-brand-red/10 border-2 border-brand-red flex items-center justify-center text-brand-red mb-4 animate-bounce">
                 <ShieldAlert size={32} />
               </div>
               <h2 className="text-xl font-extrabold text-white">Emergency Panic Alert</h2>
@@ -90,7 +90,7 @@ export default function SafetyModal({ isOpen, onClose }) {
               <div className="relative w-16 h-16 mb-4">
                 {/* Ring Animation */}
                 <div className="absolute inset-0 rounded-full border-4 border-brand-red/20 border-t-brand-red animate-spin" />
-                <div className="absolute inset-2 rounded-full bg-brand-red/10 flex items-center justify-center text-brand-red">
+                <div className="safety-modal-sending absolute inset-2 rounded-full bg-brand-red/10 flex items-center justify-center text-brand-red">
                   <Send size={20} className="animate-pulse" />
                 </div>
               </div>
@@ -101,7 +101,7 @@ export default function SafetyModal({ isOpen, onClose }) {
 
           {step === 'sent' && (
             <>
-              <div className="w-16 h-16 rounded-full bg-brand-green/10 border-2 border-brand-green flex items-center justify-center text-brand-green mb-4">
+              <div className="safety-modal-icon w-16 h-16 rounded-full bg-brand-green/10 border-2 border-brand-green flex items-center justify-center text-brand-green mb-4">
                 <CheckCircle2 size={32} className="scale-110" />
               </div>
               <h2 className="text-xl font-extrabold text-white">Alert Successfully Sent!</h2>

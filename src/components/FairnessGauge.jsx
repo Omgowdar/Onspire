@@ -28,7 +28,7 @@ export default function FairnessGauge({ score }) {
       
       <div className="relative flex items-center justify-center w-36 h-36">
         {/* Background Circle */}
-        <svg className="w-full h-full transform -rotate-90">
+        <svg className="gauge-svg w-full h-full transform -rotate-90">
           <circle
             cx="72"
             cy="72"
