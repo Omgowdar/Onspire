@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { 
   User, 
   Phone, 
-  Globe, 
   Link2, 
   Check, 
   Save, 
@@ -27,7 +26,6 @@ export default function Profile() {
   const [phone, setPhone] = useState("");
   const [trustedName, setTrustedName] = useState("");
   const [trustedPhone, setTrustedPhone] = useState("");
-  const [currentLang, setCurrentLang] = useState("English");
 
   useEffect(() => {
     fetchProfile();
@@ -41,7 +39,6 @@ export default function Profile() {
       setPhone(data.phone);
       setTrustedName(data.trustedContactName);
       setTrustedPhone(data.trustedContactPhone);
-      setCurrentLang(data.currentLanguage);
     } catch (err) {
       console.error(err);
     } finally {
@@ -59,7 +56,7 @@ export default function Profile() {
       phone,
       trustedContactName: trustedName,
       trustedContactPhone: trustedPhone,
-      currentLanguage: currentLang
+      currentLanguage: profile.currentLanguage
     };
 
     try {
@@ -182,31 +179,6 @@ export default function Profile() {
               className="w-full bg-brand-dark border border-brand-border rounded-xl px-3 py-2 text-xs font-mono font-semibold text-white"
               required
             />
-          </div>
-        </div>
-
-        <h3 className="text-xs font-black text-white uppercase tracking-wider flex items-center gap-1.5 border-b border-brand-border/50 pb-2 pt-2">
-          <Globe size={14} className="text-brand-green" />
-          <span>Language (Localization)</span>
-        </h3>
-
-        <div>
-          <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wide mb-1.5">App Language preference</label>
-          <div className="flex flex-wrap gap-2">
-            {profile.languages.map((lang) => (
-              <button
-                key={lang}
-                type="button"
-                onClick={() => setCurrentLang(lang)}
-                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                  currentLang === lang 
-                    ? "bg-brand-purple text-white shadow-md shadow-brand-purple/20" 
-                    : "bg-brand-dark text-gray-400 border border-brand-border hover:text-white"
-                }`}
-              >
-                {lang}
-              </button>
-            ))}
           </div>
         </div>
 

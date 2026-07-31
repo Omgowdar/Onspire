@@ -9,7 +9,6 @@ import {
   Check, 
   AlertCircle, 
   Phone, 
-  Globe, 
   CheckSquare, 
   Square,
   Sparkles
@@ -34,7 +33,6 @@ export default function Signup() {
   const [name, setName] = useState("");
   const [phoneOrEmail, setPhoneOrEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [language, setLanguage] = useState("English");
 
   // Step 2 Form Fields
   const [selectedPlatforms, setSelectedPlatforms] = useState(["Uber", "Zomato"]); // default checked
@@ -42,8 +40,6 @@ export default function Signup() {
   const [trustedPhone, setTrustedPhone] = useState("");
 
   const availablePlatforms = ["Uber", "Ola", "Zomato", "Swiggy", "Rapido"];
-  const languagesList = ["English", "Hindi", "Kannada", "Tamil", "Telugu"];
-
   const handleTogglePlatform = (platform) => {
     if (selectedPlatforms.includes(platform)) {
       setSelectedPlatforms(prev => prev.filter(p => p !== platform));
@@ -88,7 +84,7 @@ export default function Signup() {
         name,
         phoneOrEmail,
         password,
-        language,
+        language: "English",
         platforms: selectedPlatforms,
         trustedContactName: trustedName,
         trustedContactPhone: trustedPhone
@@ -185,26 +181,6 @@ export default function Signup() {
                   className="w-full bg-brand-dark border border-brand-border rounded-xl pl-10 pr-3.5 py-3 text-xs text-white font-bold"
                   required
                 />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wide">Preferred App Language</label>
-              <div className="flex flex-wrap gap-1.5">
-                {languagesList.map((lang) => (
-                  <button
-                    key={lang}
-                    type="button"
-                    onClick={() => setLanguage(lang)}
-                    className={`px-3 py-1.5 rounded-xl text-[10px] font-bold transition-all cursor-pointer ${
-                      language === lang 
-                        ? "bg-brand-purple text-white shadow-md" 
-                        : "bg-brand-dark text-gray-400 border border-brand-border hover:text-white"
-                    }`}
-                  >
-                    {lang}
-                  </button>
-                ))}
               </div>
             </div>
 
