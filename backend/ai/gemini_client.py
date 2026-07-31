@@ -101,7 +101,18 @@ def generate_json(prompt: str, system_instruction: str = None) -> dict:
             text_out = text_out[:-3]
         text_out = text_out.strip()
         
-        return json.loads(text_out)
+        try:
+            return json.loads(text_out)
+        except json.JSONDecodeError:
+            # Clean up potential stray quotes or double-quotes before closing brace
+            cleaned = text_out.replace('"\n"\n}', '"\n}').replace('"\n\n}', '"\n}').strip()
+            # Also clean up trailing quotes on separate lines before closing brace
+            if cleaned.endswith('"\n}'):
+                pass
+            try:
+                return json.loads(cleaned)
+            except json.JSONDecodeError as err:
+                raise RuntimeError(f"Failed to parse Gemini response as JSON. Content: {text_out}") from err
     except GoogleAPICallError as e:
         raise RuntimeError(f"Gemini API Call failed: {e.message}") from e
     except json.JSONDecodeError as e:

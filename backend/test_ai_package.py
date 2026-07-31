@@ -21,7 +21,7 @@ try:
         financial_advice
     )
 except ImportError as e:
-    print(f"Error importing ai package. Make sure you run this script from the 'Onspire' root directory.")
+    print(f"Error importing ai package. Make sure you run this script from the 'backend' directory.")
     print(f"Error details: {e}")
     import sys
     sys.exit(1)
