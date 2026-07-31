@@ -26,14 +26,16 @@ export default function Logo({ size = 32, className = "" }) {
         stroke="#4C6EE6" 
         strokeWidth="0.8" 
       />
-      {/* Centered shield path with split fill and black stroke */}
-      <path 
-        d="M17.2 12.5c0 3.2-2.2 5.0-5.16 6.55a0.8 0 0 1-.08 0c-.001 0-.002 0-.003-.001a0.8 0 0 1-.597-.549C8.7 16.9 6.8 15.1 6.8 12.5V7.8a0.5 0 0 1 .38-.48l4.6-1.25a0.8 0 0 1 .44 0l4.6 1.25a0.5 0 0 1 .38.48z" 
-        fill={`url(#${gradientId})`}
-        stroke="#000000"
-        strokeWidth="1.2"
-        strokeLinejoin="round"
-      />
+      {/* Perfect centered shield with split fill and black stroke using group transform */}
+      <g transform="translate(4.2, 3.65) scale(0.65)">
+        <path 
+          d="M20 13c0 5-3.5 7.5-7.66 9.7a1 1 0 0 1-.68 0C7.5 20.5 4 18 4 13V6a1 1 0 0 1 .76-.97l8-2a1 1 0 0 1 .48 0l8 2A1 1 0 0 1 20 6z" 
+          fill={`url(#${gradientId})`}
+          stroke="#000000"
+          strokeWidth="1.2"
+          strokeLinejoin="round"
+        />
+      </g>
     </svg>
   );
 }
